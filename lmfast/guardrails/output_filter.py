@@ -7,7 +7,7 @@ Filters and sanitizes model outputs before returning to users.
 import logging
 import re
 
-from slmflow.guardrails.config import GuardrailsConfig
+from lmfast.guardrails.config import GuardrailsConfig
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ class OutputFilter:
                 logger.info("Toxicity model initialized")
             except ImportError:
                 logger.warning(
-                    "detoxify not installed. " "Install with: pip install slmflow[guardrails]"
+                    "detoxify not installed. " "Install with: pip install lmfast[guardrails]"
                 )
         return self._toxicity_model
 
@@ -90,7 +90,7 @@ class OutputFilter:
                 logger.info("PII analyzer and anonymizer initialized")
             except ImportError:
                 logger.warning(
-                    "presidio not installed. " "Install with: pip install slmflow[guardrails]"
+                    "presidio not installed. " "Install with: pip install lmfast[guardrails]"
                 )
         return self._pii_analyzer
 
@@ -209,7 +209,7 @@ class OutputFilter:
 
             # Anonymize
             if self._anonymizer is None:
-                 return {"found": False, "entities": [], "anonymized": text}
+                return {"found": False, "entities": [], "anonymized": text}
 
             anonymized = self._anonymizer.anonymize(
                 text=text,
@@ -260,7 +260,7 @@ class GuardedModel:
         self.tokenizer = tokenizer
         self.config = config or GuardrailsConfig()
 
-        from slmflow.guardrails.input_validator import InputValidator
+        from lmfast.guardrails.input_validator import InputValidator
 
         self.input_validator = InputValidator(self.config)
         self.output_filter = OutputFilter(self.config)

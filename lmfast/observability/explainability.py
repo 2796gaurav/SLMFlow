@@ -99,7 +99,7 @@ class AttentionVisualizer:
         except ImportError:
             logger.warning(
                 "matplotlib/seaborn not installed. "
-                "Install with: pip install slmflow[observability]"
+                "Install with: pip install lmfast[observability]"
             )
             return
 

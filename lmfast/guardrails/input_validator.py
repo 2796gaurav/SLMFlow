@@ -7,7 +7,7 @@ Validates and sanitizes user inputs before processing.
 import logging
 import re
 
-from slmflow.guardrails.config import GuardrailsConfig
+from lmfast.guardrails.config import GuardrailsConfig
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +75,7 @@ class InputValidator:
             except ImportError:
                 logger.warning(
                     "presidio-analyzer not installed. "
-                    "Install with: pip install slmflow[guardrails]"
+                    "Install with: pip install lmfast[guardrails]"
                 )
         return self._pii_analyzer
 

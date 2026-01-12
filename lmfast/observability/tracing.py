@@ -93,7 +93,7 @@ class SLMTracer:
 
     def __init__(
         self,
-        project_name: str = "slmflow",
+        project_name: str = "lmfast",
         *,
         use_langfuse: bool = True,
         langfuse_host: str | None = None,
@@ -142,7 +142,7 @@ class SLMTracer:
         except ImportError:
             logger.info(
                 "Langfuse not installed. Using local tracing. "
-                "Install with: pip install slmflow[observability]"
+                "Install with: pip install lmfast[observability]"
             )
         except Exception as e:
             logger.warning(f"Failed to initialize Langfuse: {e}")

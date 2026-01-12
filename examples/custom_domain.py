@@ -41,7 +41,7 @@ DOMAIN_DATA = {
 
 
 def format_for_training(examples: list[dict]) -> list[dict]:
-    """Format examples for SLMFlow training."""
+    """Format examples for LMFast training."""
     formatted = []
     for ex in examples:
         text = f"""Below is an instruction. Write a response.
@@ -84,7 +84,7 @@ def main():
     )
     args = parser.parse_args()
     
-    from slmflow import SLMTrainer, SLMConfig, TrainingConfig
+    from lmfast import SLMTrainer, SLMConfig, TrainingConfig
     
     print("=" * 60)
     print(f"Domain-Specific Fine-Tuning: {args.domain.upper()}")

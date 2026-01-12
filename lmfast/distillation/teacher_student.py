@@ -13,9 +13,9 @@ import torch.nn as nn
 import torch.nn.functional as F  # noqa: N812
 from transformers import PreTrainedModel
 
-from slmflow.core.config import DistillationConfig, SLMConfig, TrainingConfig
-from slmflow.core.models import TokenizerType, load_model, load_tokenizer, save_model
-from slmflow.training.optimizations import clear_memory, get_memory_stats
+from lmfast.core.config import DistillationConfig, SLMConfig, TrainingConfig
+from lmfast.core.models import TokenizerType, load_model, load_tokenizer, save_model
+from lmfast.training.optimizations import clear_memory, get_memory_stats
 
 logger = logging.getLogger(__name__)
 
@@ -101,8 +101,8 @@ class DistillationTrainer:
     Optimized for Colab T4 memory constraints.
 
     Example:
-        >>> from slmflow import DistillationTrainer
-        >>> from slmflow.core.config import DistillationConfig
+        >>> from lmfast import DistillationTrainer
+        >>> from lmfast.core.config import DistillationConfig
         >>>
         >>> # Configure
         >>> config = DistillationConfig(
@@ -190,7 +190,7 @@ class DistillationTrainer:
         """Load student model."""
         logger.info("Loading student model...")
         if self._student_config is None:
-             raise ValueError("Student configuration missing")
+            raise ValueError("Student configuration missing")
         self._student, self._tokenizer = load_model(
             self._student_config,
             for_training=True,
@@ -243,8 +243,8 @@ class DistillationTrainer:
         """
         from tqdm import tqdm
 
-        from slmflow.core.models import prepare_model_for_training
-        from slmflow.training.data import prepare_dataset
+        from lmfast.core.models import prepare_model_for_training
+        from lmfast.training.data import prepare_dataset
 
         output_dir = output_dir or self.training_config.output_dir
 

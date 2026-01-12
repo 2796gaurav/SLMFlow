@@ -253,8 +253,11 @@ def get_model_size(model_path: str) -> dict:
                 "source": "huggingface",
                 "model_id": model_path,
                 "size_bytes": sum(
-                    s.size for s in (info.siblings or []) 
-                    if s.size is not None and s.rfilename is not None and s.rfilename.endswith((".bin", ".safetensors"))
+                    s.size
+                    for s in (info.siblings or [])
+                    if s.size is not None
+                    and s.rfilename is not None
+                    and s.rfilename.endswith((".bin", ".safetensors"))
                 ),
             }
         except Exception:

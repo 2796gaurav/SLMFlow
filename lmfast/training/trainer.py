@@ -12,15 +12,15 @@ from typing import Any
 import torch
 from transformers import PreTrainedModel, PreTrainedTokenizer
 
-from slmflow.core.config import SLMConfig, TrainingConfig
-from slmflow.core.models import (
+from lmfast.core.config import SLMConfig, TrainingConfig
+from lmfast.core.models import (
     TokenizerType,
     load_model,
     prepare_model_for_training,
     save_model,
 )
-from slmflow.training.data import prepare_dataset
-from slmflow.training.optimizations import get_memory_stats, optimize_for_t4
+from lmfast.training.data import prepare_dataset
+from lmfast.training.optimizations import get_memory_stats, optimize_for_t4
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ class SLMTrainer:
     - Unsloth acceleration (if available)
 
     Example:
-        >>> from slmflow import SLMTrainer, SLMConfig, TrainingConfig
+        >>> from lmfast import SLMTrainer, SLMConfig, TrainingConfig
         >>>
         >>> # Configure
         >>> model_config = SLMConfig(model_name="HuggingFaceTB/SmolLM-135M")
@@ -102,7 +102,7 @@ class SLMTrainer:
         return self._model
 
     @property
-    def tokenizer(self) -> PreTrainedTokenizer:
+    def tokenizer(self) -> TokenizerType:
         """Get the tokenizer, loading if necessary."""
         if self._tokenizer is None:
             self._load_model()
@@ -310,6 +310,7 @@ class SLMTrainer:
         # Encode prompt
         tokenizer = self.tokenizer
         from typing import cast
+
         inputs = cast(Any, tokenizer)(
             prompt,
             return_tensors="pt",

@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from slmflow.core.config import ChatTemplate
+from lmfast.core.config import ChatTemplate
 
 logger = logging.getLogger(__name__)
 
@@ -270,4 +270,3 @@ class DataCollator:
 
         # For causal LM, labels = input_ids
         return dict(batch)
-

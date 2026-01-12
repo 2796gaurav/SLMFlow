@@ -1,5 +1,5 @@
 """
-SLMFlow Command Line Interface.
+LMFast Command Line Interface.
 
 Provides commands for training, distillation, inference, and export.
 """
@@ -13,8 +13,8 @@ from rich.table import Table
 
 # Create CLI app
 app = typer.Typer(
-    name="slmflow",
-    help="SLMFlow: Democratized Small Language Model Training",
+    name="lmfast",
+    help="LMFast: Democratized Small Language Model Training",
     add_completion=False,
 )
 
@@ -26,7 +26,7 @@ logging.basicConfig(
     format="%(message)s",
     handlers=[RichHandler(console=console, rich_tracebacks=True)],
 )
-logger = logging.getLogger("slmflow")
+logger = logging.getLogger("lmfast")
 
 
 @app.command()
@@ -44,7 +44,7 @@ def train(
         help="Training data (HuggingFace dataset or local path)",
     ),
     output: str = typer.Option(
-        "./slmflow_output",
+        "./lmfast_output",
         "--output",
         "-o",
         help="Output directory",
@@ -80,12 +80,12 @@ def train(
     Train or fine-tune a Small Language Model.
 
     Example:
-        slmflow train --model HuggingFaceTB/SmolLM-135M --data yahma/alpaca-cleaned
+        lmfast train --model HuggingFaceTB/SmolLM-135M --data yahma/alpaca-cleaned
     """
-    from slmflow import SLMConfig, SLMTrainer, TrainingConfig
-    from slmflow.training.data import load_dataset
+    from lmfast import SLMConfig, SLMTrainer, TrainingConfig
+    from lmfast.training.data import load_dataset
 
-    console.print("\n[bold blue]SLMFlow Training[/bold blue]")
+    console.print("\n[bold blue]LMFast Training[/bold blue]")
     console.print(f"Model: {model}")
     console.print(f"Data: {data}")
     console.print(f"Output: {output}")
@@ -138,7 +138,7 @@ def distill(
         help="Training data",
     ),
     output: str = typer.Option(
-        "./slmflow_distilled",
+        "./lmfast_distilled",
         "--output",
         "-o",
         help="Output directory",
@@ -158,13 +158,13 @@ def distill(
     Distill knowledge from a larger teacher to a smaller student model.
 
     Example:
-        slmflow distill --teacher Qwen/Qwen2-1.5B --student HuggingFaceTB/SmolLM-135M --data my_data.json
+        lmfast distill --teacher Qwen/Qwen2-1.5B --student HuggingFaceTB/SmolLM-135M --data my_data.json
     """
-    from slmflow.core.config import DistillationConfig, TrainingConfig
-    from slmflow.distillation import DistillationTrainer
-    from slmflow.training.data import load_dataset
+    from lmfast.core.config import DistillationConfig, TrainingConfig
+    from lmfast.distillation import DistillationTrainer
+    from lmfast.training.data import load_dataset
 
-    console.print("\n[bold blue]SLMFlow Knowledge Distillation[/bold blue]")
+    console.print("\n[bold blue]LMFast Knowledge Distillation[/bold blue]")
     console.print(f"Teacher: {teacher}")
     console.print(f"Student: {student}")
     console.print()
@@ -225,11 +225,11 @@ def serve(
     Start an inference server with OpenAI-compatible API.
 
     Example:
-        slmflow serve --model ./my_model --port 8000
+        lmfast serve --model ./my_model --port 8000
     """
-    from slmflow.inference import SLMServer
+    from lmfast.inference import SLMServer
 
-    console.print("\n[bold blue]SLMFlow Inference Server[/bold blue]")
+    console.print("\n[bold blue]LMFast Inference Server[/bold blue]")
     console.print(f"Model: {model}")
     console.print(f"Endpoint: http://{host}:{port}")
     console.print()
@@ -269,11 +269,11 @@ def export(
     Export model to different formats for deployment.
 
     Example:
-        slmflow export --model ./my_model --output ./my_model.gguf --format gguf
+        lmfast export --model ./my_model --output ./my_model.gguf --format gguf
     """
-    from slmflow.inference.quantization import export_gguf, quantize_model
+    from lmfast.inference.quantization import export_gguf, quantize_model
 
-    console.print("\n[bold blue]SLMFlow Export[/bold blue]")
+    console.print("\n[bold blue]LMFast Export[/bold blue]")
     console.print(f"Model: {model}")
     console.print(f"Format: {format}")
     console.print(f"Output: {output}")
@@ -325,15 +325,15 @@ def generate(
     Generate text from a model.
 
     Example:
-        slmflow generate --model ./my_model --prompt "Hello, how are you?"
-        slmflow generate --model ./my_model --interactive
+        lmfast generate --model ./my_model --prompt "Hello, how are you?"
+        lmfast generate --model ./my_model --interactive
     """
-    from slmflow.inference import SLMServer
+    from lmfast.inference import SLMServer
 
     server = SLMServer(model, use_vllm=False)
 
     if interactive:
-        console.print("\n[bold blue]SLMFlow Interactive Mode[/bold blue]")
+        console.print("\n[bold blue]LMFast Interactive Mode[/bold blue]")
         console.print("Type 'exit' or 'quit' to exit.\n")
 
         while True:
@@ -377,10 +377,10 @@ def info(
     Show information about a model.
 
     Example:
-        slmflow info HuggingFaceTB/SmolLM-135M
+        lmfast info HuggingFaceTB/SmolLM-135M
     """
-    from slmflow.core.models import get_model_info
-    from slmflow.inference.quantization import get_model_size
+    from lmfast.core.models import get_model_info
+    from lmfast.inference.quantization import get_model_size
 
     console.print("\n[bold blue]Model Information[/bold blue]")
     console.print(f"Model: {model}\n")
@@ -429,11 +429,11 @@ def benchmark(
     Benchmark model inference performance.
 
     Example:
-        slmflow benchmark --model ./my_model --prompts 10
+        lmfast benchmark --model ./my_model --prompts 10
     """
-    from slmflow.inference import SLMServer
+    from lmfast.inference import SLMServer
 
-    console.print("\n[bold blue]SLMFlow Benchmark[/bold blue]")
+    console.print("\n[bold blue]LMFast Benchmark[/bold blue]")
     console.print(f"Model: {model}")
     console.print(f"Prompts: {num_prompts}")
     console.print(f"Runs: {runs}\n")
@@ -476,19 +476,19 @@ def main(
     ),
 ):
     """
-    SLMFlow: Democratized Small Language Model Training
+    LMFast: Democratized Small Language Model Training
 
     Train, fine-tune, distill, and deploy sub-500M parameter models
     on Colab T4 in 30-40 minutes with enterprise-grade features.
     """
     if version:
-        from slmflow import __version__
+        from lmfast import __version__
 
-        console.print(f"slmflow version {__version__}")
+        console.print(f"lmfast version {__version__}")
         raise typer.Exit()
 
     if verbose:
-        logging.getLogger("slmflow").setLevel(logging.DEBUG)
+        logging.getLogger("lmfast").setLevel(logging.DEBUG)
 
 
 if __name__ == "__main__":

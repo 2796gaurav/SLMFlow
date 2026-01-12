@@ -10,7 +10,7 @@ class TestSLMTracer:
 
     def test_trace_context(self):
         """Test trace context manager."""
-        from slmflow.observability import SLMTracer
+        from lmfast.observability import SLMTracer
 
         tracer = SLMTracer(project_name="test", use_langfuse=False)
 
@@ -26,7 +26,7 @@ class TestSLMTracer:
 
     def test_log_generation(self):
         """Test logging generation events."""
-        from slmflow.observability import SLMTracer
+        from lmfast.observability import SLMTracer
 
         tracer = SLMTracer(project_name="test", use_langfuse=False)
 
@@ -44,7 +44,7 @@ class TestSLMTracer:
 
     def test_log_training_step(self):
         """Test logging training steps."""
-        from slmflow.observability import SLMTracer
+        from lmfast.observability import SLMTracer
 
         tracer = SLMTracer(project_name="test", use_langfuse=False)
 
@@ -64,7 +64,7 @@ class TestMetricsCollector:
 
     def test_log_and_get_metrics(self):
         """Test logging and retrieving metrics."""
-        from slmflow.observability import MetricsCollector
+        from lmfast.observability import MetricsCollector
 
         collector = MetricsCollector()
 
@@ -77,7 +77,7 @@ class TestMetricsCollector:
 
     def test_batch_logging(self):
         """Test logging multiple metrics at once."""
-        from slmflow.observability import MetricsCollector
+        from lmfast.observability import MetricsCollector
 
         collector = MetricsCollector()
 
@@ -96,7 +96,7 @@ class TestMetricsCollector:
 
     def test_statistics(self):
         """Test statistical functions."""
-        from slmflow.observability import MetricsCollector
+        from lmfast.observability import MetricsCollector
 
         collector = MetricsCollector()
 
@@ -110,7 +110,7 @@ class TestMetricsCollector:
 
     def test_summary(self):
         """Test summary statistics."""
-        from slmflow.observability import MetricsCollector
+        from lmfast.observability import MetricsCollector
 
         collector = MetricsCollector()
 
@@ -132,7 +132,7 @@ class TestCostTracker:
 
     def test_record_usage(self):
         """Test recording token usage."""
-        from slmflow.observability.metrics import CostTracker
+        from lmfast.observability.metrics import CostTracker
 
         tracker = CostTracker()
 
@@ -147,7 +147,7 @@ class TestCostTracker:
 
     def test_cost_calculation(self):
         """Test cost calculation with pricing."""
-        from slmflow.observability.metrics import CostTracker
+        from lmfast.observability.metrics import CostTracker
 
         tracker = CostTracker(
             cost_per_million_input=1.0,  # $1 per 1M input tokens
@@ -165,7 +165,7 @@ class TestTraceSpan:
 
     def test_span_attributes(self):
         """Test span attribute setting."""
-        from slmflow.observability.tracing import TraceSpan
+        from lmfast.observability.tracing import TraceSpan
 
         span = TraceSpan("test", "trace_123")
         span.set_attribute("key1", "value1")
@@ -176,7 +176,7 @@ class TestTraceSpan:
 
     def test_span_events(self):
         """Test span event adding."""
-        from slmflow.observability.tracing import TraceSpan
+        from lmfast.observability.tracing import TraceSpan
 
         span = TraceSpan("test", "trace_123")
         span.add_event("event1", {"detail": "info"})
@@ -187,7 +187,7 @@ class TestTraceSpan:
 
     def test_span_duration(self):
         """Test span duration calculation."""
-        from slmflow.observability.tracing import TraceSpan
+        from lmfast.observability.tracing import TraceSpan
 
         span = TraceSpan("test", "trace_123")
         time.sleep(0.01)

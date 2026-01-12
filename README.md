@@ -1,6 +1,6 @@
-# 🚀 SLMFlow
+# 🚀 LMFast
 
-[![PyPI version](https://badge.fury.io/py/slmflow.svg)](https://badge.fury.io/py/slmflow)
+[![PyPI version](https://badge.fury.io/py/lmfast.svg)](https://badge.fury.io/py/lmfast)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
@@ -28,22 +28,22 @@
 
 ```bash
 # Basic installation
-pip install slmflow
+pip install lmfast
 
 # With all features
-pip install slmflow[all]
+pip install lmfast[all]
 
 # Specific extras
-pip install slmflow[fast]        # Unsloth for faster training
-pip install slmflow[guardrails]  # Safety features
-pip install slmflow[observability]  # Monitoring
-pip install slmflow[inference]   # vLLM serving
+pip install lmfast[fast]        # Unsloth for faster training
+pip install lmfast[guardrails]  # Safety features
+pip install lmfast[observability]  # Monitoring
+pip install lmfast[inference]   # vLLM serving
 ```
 
 ### Train in 5 Lines
 
 ```python
-from slmflow import SLMTrainer, SLMConfig, TrainingConfig
+from lmfast import SLMTrainer, SLMConfig, TrainingConfig
 from datasets import load_dataset
 
 # Load data
@@ -62,19 +62,19 @@ trainer.save("./my_slm")
 
 ```bash
 # Train a model
-slmflow train --model HuggingFaceTB/SmolLM-135M --data yahma/alpaca-cleaned --output ./my_model
+lmfast train --model HuggingFaceTB/SmolLM-135M --data yahma/alpaca-cleaned --output ./my_model
 
 # Knowledge distillation
-slmflow distill --teacher Qwen/Qwen2-1.5B --student HuggingFaceTB/SmolLM-135M --data my_data.json
+lmfast distill --teacher Qwen/Qwen2-1.5B --student HuggingFaceTB/SmolLM-135M --data my_data.json
 
 # Start inference server
-slmflow serve --model ./my_model --port 8000
+lmfast serve --model ./my_model --port 8000
 
 # Export to GGUF
-slmflow export --model ./my_model --output ./model.gguf --format gguf
+lmfast export --model ./my_model --output ./model.gguf --format gguf
 
 # Interactive chat
-slmflow generate --model ./my_model --interactive
+lmfast generate --model ./my_model --interactive
 ```
 
 ---
@@ -84,7 +84,7 @@ slmflow generate --model ./my_model --interactive
 ### Training
 
 ```python
-from slmflow import SLMTrainer, SLMConfig, TrainingConfig
+from lmfast import SLMTrainer, SLMConfig, TrainingConfig
 
 # Configure for T4 GPU
 model_config = SLMConfig(
@@ -109,8 +109,8 @@ trainer.train(dataset)
 ### Knowledge Distillation
 
 ```python
-from slmflow.distillation import DistillationTrainer
-from slmflow.core.config import DistillationConfig
+from lmfast.distillation import DistillationTrainer
+from lmfast.core.config import DistillationConfig
 
 config = DistillationConfig(
     teacher_model="Qwen/Qwen2-1.5B",
@@ -128,7 +128,7 @@ trainer.distill(dataset)
 ### Guardrails
 
 ```python
-from slmflow.guardrails import GuardrailsConfig, InputValidator, OutputFilter
+from lmfast.guardrails import GuardrailsConfig, InputValidator, OutputFilter
 
 config = GuardrailsConfig(
     enable_pii_detection=True,
@@ -146,7 +146,7 @@ if result.is_valid:
 ### Observability
 
 ```python
-from slmflow.observability import SLMTracer, MetricsCollector
+from lmfast.observability import SLMTracer, MetricsCollector
 
 # Tracing (Langfuse integration)
 tracer = SLMTracer(project_name="my_project")
@@ -165,7 +165,7 @@ collector.plot("loss")
 ### Fast Inference
 
 ```python
-from slmflow.inference import SLMServer
+from lmfast.inference import SLMServer
 
 # Create server
 server = SLMServer("./my_model", use_vllm=True)
@@ -197,7 +197,7 @@ server.serve(port=8000)
 ## 📦 Package Structure
 
 ```
-slmflow/
+lmfast/
 ├── core/           # Config and model loading
 ├── training/       # Training and data processing
 ├── distillation/   # Knowledge distillation
@@ -213,12 +213,12 @@ slmflow/
 
 ```bash
 # Clone
-git clone https://github.com/slmflow/slmflow
-cd slmflow
+git clone https://github.com/lmfast/lmfast
+cd lmfast
 
 # Create environment
 conda env create -f environment.yml
-conda activate slmflow
+conda activate lmfast
 
 # Install in dev mode
 pip install -e ".[dev]"
@@ -227,8 +227,8 @@ pip install -e ".[dev]"
 pytest tests/ -v
 
 # Format code
-black slmflow/ tests/
-ruff check slmflow/ tests/
+black lmfast/ tests/
+ruff check lmfast/ tests/
 ```
 
 ---

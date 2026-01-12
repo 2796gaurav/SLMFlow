@@ -11,8 +11,8 @@ import torch
 import torch.nn.functional as F  # noqa: N812
 from transformers import PreTrainedModel
 
-from slmflow.core.config import SLMConfig, TrainingConfig
-from slmflow.core.models import TokenizerType, load_model, prepare_model_for_training, save_model
+from lmfast.core.config import SLMConfig, TrainingConfig
+from lmfast.core.models import TokenizerType, load_model, prepare_model_for_training, save_model
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +143,7 @@ class SelfDistillationTrainer:
             logger.info(f"Iteration {iteration + 1} complete: {metrics}")
 
         # Save final model
-        save_model(self._model, self._tokenizer, output_dir)
+        save_model(self.model, self.tokenizer, output_dir)
 
         return all_metrics
 

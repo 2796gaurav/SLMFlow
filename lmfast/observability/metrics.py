@@ -37,7 +37,7 @@ class MetricsCollector:
         >>> collector.plot("loss")
     """
 
-    def __init__(self, name: str = "slmflow"):
+    def __init__(self, name: str = "lmfast"):
         """
         Initialize metrics collector.
 
@@ -190,7 +190,7 @@ class MetricsCollector:
             import matplotlib.pyplot as plt
         except ImportError:
             logger.warning(
-                "matplotlib not installed. " "Install with: pip install slmflow[observability]"
+                "matplotlib not installed. " "Install with: pip install lmfast[observability]"
             )
             return
 

@@ -7,7 +7,7 @@ with automatic optimization for Colab T4 (12GB VRAM).
 
 import logging
 from pathlib import Path
-from typing import Any, TypeAlias, Union
+from typing import Any
 
 import torch
 from transformers import (
@@ -18,12 +18,12 @@ from transformers import (
     PreTrainedTokenizerFast,
 )
 
-from slmflow.core.config import SLMConfig, TrainingConfig
+from lmfast.core.config import SLMConfig, TrainingConfig
 
 logger = logging.getLogger(__name__)
 
 # Type alias for tokenizers
-TokenizerType = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
+TokenizerType = PreTrainedTokenizer | PreTrainedTokenizerFast
 
 
 def detect_environment() -> dict[str, Any]:
@@ -145,6 +145,7 @@ def load_tokenizer(
 
     logger.info(f"Tokenizer loaded: vocab_size={tokenizer.vocab_size}")
     from typing import cast
+
     return cast(TokenizerType, tokenizer)
 
 
@@ -385,6 +386,7 @@ def save_model(
             raise ValueError("hub_model_id required when push_to_hub=True")
 
         from typing import Any, cast
+
         cast(Any, model).push_to_hub(hub_model_id, **kwargs)
         cast(Any, tokenizer).push_to_hub(hub_model_id)
         logger.info(f"Model pushed to Hub: {hub_model_id}")

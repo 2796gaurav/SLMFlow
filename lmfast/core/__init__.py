@@ -1,12 +1,12 @@
 """Core module initialization."""
 
-from slmflow.core.config import (
+from lmfast.core.config import (
     DistillationConfig,
     InferenceConfig,
     SLMConfig,
     TrainingConfig,
 )
-from slmflow.core.models import (
+from lmfast.core.models import (
     get_model_info,
     load_model,
     load_tokenizer,

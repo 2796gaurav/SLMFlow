@@ -11,8 +11,8 @@ from typing import Any
 import torch
 from transformers import PreTrainedModel
 
-from slmflow.core.config import InferenceConfig, SLMConfig
-from slmflow.core.models import TokenizerType, load_model, load_tokenizer
+from lmfast.core.config import InferenceConfig, SLMConfig
+from lmfast.core.models import TokenizerType, load_model, load_tokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +118,7 @@ class SLMServer:
         except ImportError:
             logger.info(
                 "vLLM not installed. Falling back to transformers. "
-                "Install with: pip install slmflow[inference]"
+                "Install with: pip install lmfast[inference]"
             )
         except Exception as e:
             logger.warning(f"vLLM loading failed: {e}. Falling back to transformers.")
@@ -141,7 +141,7 @@ class SLMServer:
         self._tokenizer = tokenizer
 
         if self._model is not None:
-             self._model.eval()
+            self._model.eval()
         logger.info("Model loaded with transformers")
 
     def generate(
@@ -319,7 +319,7 @@ class SLMServer:
             from pydantic import BaseModel
         except ImportError:
             logger.error(
-                "FastAPI/uvicorn not installed. " "Install with: pip install slmflow[inference]"
+                "FastAPI/uvicorn not installed. " "Install with: pip install lmfast[inference]"
             )
             return
 
@@ -327,7 +327,7 @@ class SLMServer:
         _ = self.model
 
         # Create FastAPI app
-        app = FastAPI(title="SLMFlow Inference Server")
+        app = FastAPI(title="LMFast Inference Server")
 
         class CompletionRequest(BaseModel):
             prompt: str

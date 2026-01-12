@@ -11,7 +11,7 @@ class TestSLMConfig:
 
     def test_default_config(self):
         """Test default configuration values."""
-        from slmflow.core.config import SLMConfig
+        from lmfast.core.config import SLMConfig
 
         config = SLMConfig()
 
@@ -22,7 +22,7 @@ class TestSLMConfig:
 
     def test_custom_config(self):
         """Test custom configuration."""
-        from slmflow.core.config import SLMConfig
+        from lmfast.core.config import SLMConfig
 
         config = SLMConfig(
             model_name="custom/model",
@@ -36,14 +36,14 @@ class TestSLMConfig:
 
     def test_quantization_validation(self):
         """Test that both 4-bit and 8-bit can't be enabled."""
-        from slmflow.core.config import SLMConfig
+        from lmfast.core.config import SLMConfig
 
         with pytest.raises(ValidationError):
             SLMConfig(load_in_4bit=True, load_in_8bit=True)
 
     def test_is_colab_t4_compatible(self):
         """Test T4 compatibility check."""
-        from slmflow.core.config import SLMConfig
+        from lmfast.core.config import SLMConfig
 
         # Should be compatible
         config = SLMConfig(
@@ -62,7 +62,7 @@ class TestSLMConfig:
 
     def test_model_size_estimate(self):
         """Test model size estimation."""
-        from slmflow.core.config import SLMConfig
+        from lmfast.core.config import SLMConfig
 
         config = SLMConfig(model_name="model-135m")
         assert "135M" in config.model_size_estimate
@@ -76,7 +76,7 @@ class TestTrainingConfig:
 
     def test_default_config(self):
         """Test default training configuration."""
-        from slmflow.core.config import TrainingConfig
+        from lmfast.core.config import TrainingConfig
 
         config = TrainingConfig()
 
@@ -87,14 +87,14 @@ class TestTrainingConfig:
 
     def test_effective_batch_size(self):
         """Test effective batch size calculation."""
-        from slmflow.core.config import TrainingConfig
+        from lmfast.core.config import TrainingConfig
 
         config = TrainingConfig(batch_size=4, gradient_accumulation_steps=4)
         assert config.effective_batch_size == 16
 
     def test_estimated_training_time(self):
         """Test training time estimation."""
-        from slmflow.core.config import TrainingConfig
+        from lmfast.core.config import TrainingConfig
 
         config = TrainingConfig(max_steps=500)
         # ~2 seconds per step, so 500 steps ≈ 16-17 minutes
@@ -103,7 +103,7 @@ class TestTrainingConfig:
 
     def test_sft_config_kwargs(self):
         """Test conversion to SFT config kwargs."""
-        from slmflow.core.config import TrainingConfig
+        from lmfast.core.config import TrainingConfig
 
         config = TrainingConfig(
             output_dir="./test",
@@ -119,7 +119,7 @@ class TestTrainingConfig:
 
     def test_lora_config_kwargs(self):
         """Test conversion to LoRA config kwargs."""
-        from slmflow.core.config import TrainingConfig
+        from lmfast.core.config import TrainingConfig
 
         config = TrainingConfig(
             lora_r=32,
@@ -139,7 +139,7 @@ class TestDistillationConfig:
 
     def test_default_values(self):
         """Test default distillation config."""
-        from slmflow.core.config import DistillationConfig
+        from lmfast.core.config import DistillationConfig
 
         config = DistillationConfig(teacher_model="test/teacher")
 
@@ -149,7 +149,7 @@ class TestDistillationConfig:
 
     def test_temperature_bounds(self):
         """Test temperature validation."""
-        from slmflow.core.config import DistillationConfig
+        from lmfast.core.config import DistillationConfig
 
         # Valid
         config = DistillationConfig(
@@ -172,7 +172,7 @@ class TestInferenceConfig:
 
     def test_generation_kwargs(self):
         """Test conversion to generation kwargs."""
-        from slmflow.core.config import InferenceConfig
+        from lmfast.core.config import InferenceConfig
 
         config = InferenceConfig(
             max_new_tokens=128,
@@ -189,7 +189,7 @@ class TestInferenceConfig:
 
     def test_greedy_sampling(self):
         """Test that do_sample is False for temperature=0."""
-        from slmflow.core.config import InferenceConfig
+        from lmfast.core.config import InferenceConfig
 
         config = InferenceConfig(temperature=0.0)
         kwargs = config.to_generation_kwargs()

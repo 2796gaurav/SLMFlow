@@ -1,7 +1,7 @@
 """
-SLMFlow Quickstart Example
+LMFast Quickstart Example
 
-This script demonstrates the basic usage of SLMFlow for training
+This script demonstrates the basic usage of LMFast for training
 a small language model on custom data.
 
 Usage:
@@ -19,10 +19,10 @@ sample_data = [
 
 def main():
     """Main training example."""
-    from slmflow import SLMTrainer, SLMConfig, TrainingConfig
+    from lmfast import SLMTrainer, SLMConfig, TrainingConfig
     
     print("=" * 60)
-    print("SLMFlow Quickstart")
+    print("LMFast Quickstart")
     print("=" * 60)
     
     # Create dataset

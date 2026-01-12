@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "slmflow"
+name = "lmfast"
 version = "0.1.0"
 description = "Democratized Small Language Model Training - Train, fine-tune, distill, and deploy sub-500M parameter models on Colab T4 in 30-40 minutes"
 readme = "README.md"
@@ -105,20 +105,20 @@ dev = [
 
 # All optional dependencies
 all = [
-    "slmflow[fast,guardrails,observability,inference,dev]",
+    "lmfast[fast,guardrails,observability,inference,dev]",
 ]
 
 [project.scripts]
-slmflow = "slmflow.cli.main:app"
+lmfast = "lmfast.cli.main:app"
 
 [project.urls]
-Homepage = "https://github.com/slmflow/slmflow"
-Documentation = "https://slmflow.readthedocs.io"
-Repository = "https://github.com/slmflow/slmflow"
-Issues = "https://github.com/slmflow/slmflow/issues"
+Homepage = "https://github.com/2796gaurav/LMFast"
+Documentation = "https://lmfast.readthedocs.io"
+Repository = "https://github.com/2796gaurav/LMFast"
+Issues = "https://github.com/2796gaurav/LMFast/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["slmflow"]
+packages = ["lmfast"]
 
 [tool.black]
 line-length = 100
@@ -141,4 +141,4 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "-v --cov=slmflow --cov-report=term-missing"
+addopts = "-v --cov=lmfast --cov-report=term-missing"

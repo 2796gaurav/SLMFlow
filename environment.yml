@@ -1,4 +1,4 @@
-name: slmflow
+name: lmfast
 channels:
   - pytorch
   - nvidia

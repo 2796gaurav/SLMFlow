@@ -1,5 +1,5 @@
 """
-Configuration classes for SLMFlow.
+Configuration classes for LMFast.
 
 All configurations use Pydantic for validation and serialization.
 Designed for Colab T4 GPU (12GB VRAM) optimization by default.
@@ -164,7 +164,7 @@ class TrainingConfig(BaseModel):
 
     # Output
     output_dir: str = Field(
-        default="./slmflow_output", description="Directory to save model and checkpoints"
+        default="./lmfast_output", description="Directory to save model and checkpoints"
     )
 
     # Training duration

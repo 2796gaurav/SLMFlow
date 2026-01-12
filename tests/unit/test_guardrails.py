@@ -8,7 +8,7 @@ class TestInputValidator:
 
     def test_validate_safe_input(self):
         """Test that safe input passes validation."""
-        from slmflow.guardrails import GuardrailsConfig, InputValidator
+        from lmfast.guardrails import GuardrailsConfig, InputValidator
 
         config = GuardrailsConfig(
             enable_pii_detection=False,  # Skip PII for unit test
@@ -24,7 +24,7 @@ class TestInputValidator:
 
     def test_detect_prompt_injection(self):
         """Test prompt injection detection."""
-        from slmflow.guardrails import GuardrailsConfig, InputValidator
+        from lmfast.guardrails import GuardrailsConfig, InputValidator
 
         config = GuardrailsConfig(enable_prompt_injection=True)
         validator = InputValidator(config)
@@ -45,7 +45,7 @@ class TestInputValidator:
 
     def test_blocked_phrases(self):
         """Test blocked phrase detection."""
-        from slmflow.guardrails import GuardrailsConfig, InputValidator
+        from lmfast.guardrails import GuardrailsConfig, InputValidator
 
         config = GuardrailsConfig(
             blocked_phrases=["forbidden_word", "bad_term"],
@@ -58,7 +58,7 @@ class TestInputValidator:
 
     def test_length_truncation(self):
         """Test input length truncation."""
-        from slmflow.guardrails import GuardrailsConfig, InputValidator
+        from lmfast.guardrails import GuardrailsConfig, InputValidator
 
         config = GuardrailsConfig(max_input_tokens=100)
         validator = InputValidator(config)
@@ -73,7 +73,7 @@ class TestInputValidator:
 
     def test_is_safe_quick_check(self):
         """Test is_safe quick check method."""
-        from slmflow.guardrails import GuardrailsConfig, InputValidator
+        from lmfast.guardrails import GuardrailsConfig, InputValidator
 
         config = GuardrailsConfig(enable_prompt_injection=True)
         validator = InputValidator(config)
@@ -87,8 +87,8 @@ class TestOutputFilter:
 
     def test_filter_safe_output(self):
         """Test that safe output passes filtering."""
-        from slmflow.guardrails import GuardrailsConfig
-        from slmflow.guardrails.output_filter import OutputFilter
+        from lmfast.guardrails import GuardrailsConfig
+        from lmfast.guardrails.output_filter import OutputFilter
 
         config = GuardrailsConfig(
             enable_toxicity_filter=False,  # Skip for unit test
@@ -103,8 +103,8 @@ class TestOutputFilter:
 
     def test_blocked_phrases_redaction(self):
         """Test blocked phrase redaction in output."""
-        from slmflow.guardrails import GuardrailsConfig
-        from slmflow.guardrails.output_filter import OutputFilter
+        from lmfast.guardrails import GuardrailsConfig
+        from lmfast.guardrails.output_filter import OutputFilter
 
         config = GuardrailsConfig(
             blocked_phrases=["secret_word"],
@@ -119,8 +119,8 @@ class TestOutputFilter:
 
     def test_output_length_truncation(self):
         """Test output length truncation."""
-        from slmflow.guardrails import GuardrailsConfig
-        from slmflow.guardrails.output_filter import OutputFilter
+        from lmfast.guardrails import GuardrailsConfig
+        from lmfast.guardrails.output_filter import OutputFilter
 
         config = GuardrailsConfig(
             max_output_tokens=50,
@@ -140,7 +140,7 @@ class TestGuardrailsConfig:
 
     def test_default_config(self):
         """Test default guardrails configuration."""
-        from slmflow.guardrails import GuardrailsConfig
+        from lmfast.guardrails import GuardrailsConfig
 
         config = GuardrailsConfig()
 
@@ -151,7 +151,7 @@ class TestGuardrailsConfig:
 
     def test_custom_injection_patterns(self):
         """Test custom injection patterns."""
-        from slmflow.guardrails import GuardrailsConfig, InputValidator
+        from lmfast.guardrails import GuardrailsConfig, InputValidator
 
         config = GuardrailsConfig(
             injection_patterns=["custom_pattern"],
