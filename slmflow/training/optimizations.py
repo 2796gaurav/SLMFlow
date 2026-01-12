@@ -14,7 +14,7 @@ import torch
 logger = logging.getLogger(__name__)
 
 
-def get_memory_stats() -> dict[str, float]:
+def get_memory_stats() -> dict[str, Any]:
     """
     Get current GPU memory statistics.
 
@@ -251,4 +251,4 @@ class MemoryTracker:
         """Get peak memory usage in GB."""
         if not self.snapshots:
             return 0.0
-        return max(s.get("allocated_gb", 0) for s in self.snapshots)
+        return float(max(s.get("allocated_gb", 0.0) for s in self.snapshots))

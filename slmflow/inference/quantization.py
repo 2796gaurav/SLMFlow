@@ -38,19 +38,19 @@ def quantize_model(
     Example:
         >>> quantize_model("./my_model", "./my_model_int4", method="int4")
     """
-    output_path = Path(output_path)
-    output_path.mkdir(parents=True, exist_ok=True)
+    out_path = Path(output_path)
+    out_path.mkdir(parents=True, exist_ok=True)
 
-    logger.info(f"Quantizing {model_path} with {method} to {output_path}")
+    logger.info(f"Quantizing {model_path} with {method} to {out_path}")
 
     if method == "int4":
-        return _quantize_bitsandbytes(model_path, output_path, bits=4)
+        return _quantize_bitsandbytes(model_path, out_path, bits=4)
     elif method == "int8":
-        return _quantize_bitsandbytes(model_path, output_path, bits=8)
+        return _quantize_bitsandbytes(model_path, out_path, bits=8)
     elif method == "awq":
-        return _quantize_awq(model_path, output_path, calibration_dataset)
+        return _quantize_awq(model_path, out_path, calibration_dataset)
     elif method == "gptq":
-        return _quantize_gptq(model_path, output_path, calibration_dataset)
+        return _quantize_gptq(model_path, out_path, calibration_dataset)
     else:
         raise ValueError(f"Unknown quantization method: {method}")
 
@@ -174,7 +174,7 @@ def export_gguf(
     import subprocess
     from shutil import which
 
-    output_path = Path(output_path)
+    out_path = Path(output_path)
 
     # Check for llama.cpp convert script
     if which("convert-hf-to-gguf.py") is None:
@@ -185,7 +185,7 @@ def export_gguf(
 
         # Try alternate approach using huggingface_hub
         try:
-            return _export_gguf_online(model_path, output_path, quantization)
+            return _export_gguf_online(model_path, out_path, quantization)
         except Exception as e:
             raise RuntimeError(
                 f"GGUF export failed: {e}. " "Please install llama.cpp for local conversion."
@@ -197,7 +197,7 @@ def export_gguf(
         "convert-hf-to-gguf.py",
         model_path,
         "--outfile",
-        str(output_path),
+        str(out_path),
         "--outtype",
         quantization,
     ]
@@ -208,7 +208,7 @@ def export_gguf(
         raise RuntimeError(f"GGUF conversion failed: {result.stderr}")
 
     logger.info(f"GGUF model exported to {output_path}")
-    return output_path
+    return out_path
 
 
 def _export_gguf_online(
@@ -253,7 +253,8 @@ def get_model_size(model_path: str) -> dict:
                 "source": "huggingface",
                 "model_id": model_path,
                 "size_bytes": sum(
-                    s.size for s in info.siblings if s.rfilename.endswith((".bin", ".safetensors"))
+                    s.size for s in (info.siblings or []) 
+                    if s.size is not None and s.rfilename is not None and s.rfilename.endswith((".bin", ".safetensors"))
                 ),
             }
         except Exception:

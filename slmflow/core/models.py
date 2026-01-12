@@ -7,7 +7,7 @@ with automatic optimization for Colab T4 (12GB VRAM).
 
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeAlias, Union
 
 import torch
 from transformers import (
@@ -23,7 +23,7 @@ from slmflow.core.config import SLMConfig, TrainingConfig
 logger = logging.getLogger(__name__)
 
 # Type alias for tokenizers
-TokenizerType = PreTrainedTokenizer | PreTrainedTokenizerFast
+TokenizerType = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
 
 def detect_environment() -> dict[str, Any]:
@@ -33,12 +33,12 @@ def detect_environment() -> dict[str, Any]:
     Returns:
         Dictionary with environment info (is_colab, gpu_name, vram_gb, etc.)
     """
-    env_info = {
+    env_info: dict[str, Any] = {
         "is_colab": False,
         "is_kaggle": False,
         "gpu_available": torch.cuda.is_available(),
         "gpu_name": None,
-        "vram_gb": 0,
+        "vram_gb": 0.0,
         "recommended_dtype": "float16",
     }
 
@@ -60,11 +60,12 @@ def detect_environment() -> dict[str, Any]:
 
     # Get GPU info
     if torch.cuda.is_available():
-        env_info["gpu_name"] = torch.cuda.get_device_name(0)
-        env_info["vram_gb"] = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+        env_info["gpu_name"] = str(torch.cuda.get_device_name(0))
+        env_info["vram_gb"] = float(torch.cuda.get_device_properties(0).total_memory / (1024**3))
 
         # Recommend dtype based on GPU
-        if "A100" in env_info["gpu_name"] or "H100" in env_info["gpu_name"]:
+        gpu_name = str(env_info["gpu_name"])
+        if "A100" in gpu_name or "H100" in gpu_name:
             env_info["recommended_dtype"] = "bfloat16"
         else:
             env_info["recommended_dtype"] = "float16"
@@ -87,7 +88,7 @@ def get_model_info(model_name: str) -> dict[str, Any]:
     try:
         info = hf_model_info(model_name)
         return {
-            "model_id": info.modelId,
+            "model_id": getattr(info, "model_id", getattr(info, "modelId", model_name)),
             "downloads": info.downloads,
             "likes": info.likes,
             "tags": info.tags,
@@ -143,7 +144,8 @@ def load_tokenizer(
         tokenizer.add_eos_token = True
 
     logger.info(f"Tokenizer loaded: vocab_size={tokenizer.vocab_size}")
-    return tokenizer
+    from typing import cast
+    return cast(TokenizerType, tokenizer)
 
 
 def load_model(
@@ -318,10 +320,10 @@ def prepare_model_for_training(
     from peft import LoraConfig, get_peft_model
 
     lora_config = LoraConfig(**training_config.to_lora_config_kwargs())
-    model = get_peft_model(model, lora_config)
+    peft_model = get_peft_model(model, lora_config)
 
     # Print trainable parameters
-    trainable_params, all_params = model.get_nb_trainable_parameters()
+    trainable_params, all_params = peft_model.get_nb_trainable_parameters()
     logger.info(
         f"LoRA applied: {trainable_params:,} trainable params "
         f"({100 * trainable_params / all_params:.2f}% of {all_params:,} total)"
@@ -382,8 +384,9 @@ def save_model(
         if hub_model_id is None:
             raise ValueError("hub_model_id required when push_to_hub=True")
 
-        model.push_to_hub(hub_model_id, **kwargs)
-        tokenizer.push_to_hub(hub_model_id)
+        from typing import Any, cast
+        cast(Any, model).push_to_hub(hub_model_id, **kwargs)
+        cast(Any, tokenizer).push_to_hub(hub_model_id)
         logger.info(f"Model pushed to Hub: {hub_model_id}")
 
     return output_dir

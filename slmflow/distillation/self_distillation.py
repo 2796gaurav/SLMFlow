@@ -9,14 +9,18 @@ from typing import Any
 
 import torch
 import torch.nn.functional as F  # noqa: N812
+from transformers import PreTrainedModel
 
 from slmflow.core.config import SLMConfig, TrainingConfig
-from slmflow.core.models import load_model, prepare_model_for_training, save_model
+from slmflow.core.models import TokenizerType, load_model, prepare_model_for_training, save_model
 
 logger = logging.getLogger(__name__)
 
 
 class SelfDistillationTrainer:
+    _model: PreTrainedModel | None
+    _tokenizer: TokenizerType | None
+
     """
     Self-distillation trainer.
 
@@ -61,24 +65,30 @@ class SelfDistillationTrainer:
         logger.info(f"  Iterations: {num_iterations}")
 
     @property
-    def model(self):
-        """Get model, loading if necessary."""
+    def model(self) -> PreTrainedModel:
+        """Get model."""
         if self._model is None:
             self._load_model()
+        assert self._model is not None, "Model failed to load"
         return self._model
 
     @property
-    def tokenizer(self):
+    def tokenizer(self) -> TokenizerType:
         """Get tokenizer."""
+        if self._tokenizer is None:
+            self._load_model()
+        assert self._tokenizer is not None, "Tokenizer failed to load"
         return self._tokenizer
 
     def _load_model(self) -> None:
         """Load model."""
-        self._model, self._tokenizer = load_model(
+        model, tokenizer = load_model(
             self.model_config,
             for_training=True,
             use_unsloth=True,
         )
+        self._model = model
+        self._tokenizer = tokenizer
 
     def distill(
         self,

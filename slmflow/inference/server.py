@@ -6,16 +6,22 @@ Provides fast inference with optional vLLM backend.
 
 import logging
 import time
+from typing import Any
 
 import torch
+from transformers import PreTrainedModel
 
 from slmflow.core.config import InferenceConfig, SLMConfig
-from slmflow.core.models import load_model, load_tokenizer
+from slmflow.core.models import TokenizerType, load_model, load_tokenizer
 
 logger = logging.getLogger(__name__)
 
 
 class SLMServer:
+    _model: PreTrainedModel | None
+    _tokenizer: TokenizerType | None
+    _vllm_engine: Any | None
+
     """
     High-throughput inference server for SLMs.
 
@@ -104,7 +110,8 @@ class SLMServer:
             self._is_vllm = True
 
             # Load tokenizer separately for compatibility
-            self._tokenizer = load_tokenizer(self.model_path)
+            tokenizer = load_tokenizer(self.model_path)
+            self._tokenizer = tokenizer
 
             logger.info("vLLM engine loaded successfully")
 
@@ -125,13 +132,16 @@ class SLMServer:
             load_in_4bit=self.config.quantization == "int4",
         )
 
-        self._model, self._tokenizer = load_model(
+        model, tokenizer = load_model(
             model_config,
             for_training=False,
             use_unsloth=False,
         )
+        self._model = model
+        self._tokenizer = tokenizer
 
-        self._model.eval()
+        if self._model is not None:
+             self._model.eval()
         logger.info("Model loaded with transformers")
 
     def generate(
@@ -234,6 +244,8 @@ class SLMServer:
             top_k=top_k,
         )
 
+        if self._vllm_engine is None:
+            raise RuntimeError("vLLM engine not loaded")
         outputs = self._vllm_engine.generate(prompts, sampling_params)
 
         return [output.outputs[0].text for output in outputs]

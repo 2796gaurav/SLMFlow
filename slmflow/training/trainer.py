@@ -14,6 +14,7 @@ from transformers import PreTrainedModel, PreTrainedTokenizer
 
 from slmflow.core.config import SLMConfig, TrainingConfig
 from slmflow.core.models import (
+    TokenizerType,
     load_model,
     prepare_model_for_training,
     save_model,
@@ -25,6 +26,10 @@ logger = logging.getLogger(__name__)
 
 
 class SLMTrainer:
+    _model: PreTrainedModel | None
+    _tokenizer: TokenizerType | None
+    _trainer: Any | None
+
     """
     End-to-end trainer for Small Language Models.
 
@@ -93,6 +98,7 @@ class SLMTrainer:
         """Get the model, loading if necessary."""
         if self._model is None:
             self._load_model()
+        assert self._model is not None, "Model failed to load"
         return self._model
 
     @property
@@ -100,6 +106,7 @@ class SLMTrainer:
         """Get the tokenizer, loading if necessary."""
         if self._tokenizer is None:
             self._load_model()
+        assert self._tokenizer is not None, "Tokenizer failed to load"
         return self._tokenizer
 
     def _load_model(self) -> None:
@@ -135,8 +142,9 @@ class SLMTrainer:
         _ = self.model
 
         # Apply LoRA
+        model = self.model
         self._model = prepare_model_for_training(
-            self._model,
+            model,
             self.training_config,
             use_unsloth=self.use_unsloth,
         )
@@ -205,6 +213,9 @@ class SLMTrainer:
         logger.info("Starting training...")
         logger.info(f"  Output dir: {self.training_config.output_dir}")
 
+        if self._trainer is None:
+            raise RuntimeError("Trainer not created. Call prepare() first.")
+
         train_result = self._trainer.train(
             resume_from_checkpoint=resume_from_checkpoint,
         )
@@ -216,7 +227,7 @@ class SLMTrainer:
         # Save final model
         self.save(self.training_config.output_dir)
 
-        return metrics
+        return dict(metrics)
 
     def _create_trainer(
         self,
@@ -236,10 +247,10 @@ class SLMTrainer:
 
         # Create trainer
         trainer = SFTTrainer(
-            model=self._model,
+            model=self.model,
             args=sft_config,
             train_dataset=train_dataset,
-            tokenizer=self._tokenizer,
+            processing_class=self.tokenizer,
             callbacks=callbacks,
         )
 
@@ -266,8 +277,8 @@ class SLMTrainer:
             Path to saved model
         """
         return save_model(
-            self._model,
-            self._tokenizer,
+            self.model,
+            self.tokenizer,
             output_dir,
             merge_adapters=merge_adapters,
             push_to_hub=push_to_hub,
@@ -297,7 +308,9 @@ class SLMTrainer:
             Generated text
         """
         # Encode prompt
-        inputs = self.tokenizer(
+        tokenizer = self.tokenizer
+        from typing import cast
+        inputs = cast(Any, tokenizer)(
             prompt,
             return_tensors="pt",
             truncation=True,
@@ -305,8 +318,9 @@ class SLMTrainer:
         ).to(self.model.device)
 
         # Generate
+        model = self.model
         with torch.no_grad():
-            outputs = self.model.generate(
+            outputs = cast(Any, model).generate(
                 **inputs,
                 max_new_tokens=max_new_tokens,
                 temperature=temperature,
@@ -323,7 +337,7 @@ class SLMTrainer:
             skip_special_tokens=True,
         )
 
-        return response
+        return str(response)
 
     @classmethod
     def from_pretrained(

@@ -208,6 +208,9 @@ class OutputFilter:
                 return {"found": False, "entities": [], "anonymized": text}
 
             # Anonymize
+            if self._anonymizer is None:
+                 return {"found": False, "entities": [], "anonymized": text}
+
             anonymized = self._anonymizer.anonymize(
                 text=text,
                 analyzer_results=results,
@@ -311,4 +314,4 @@ class GuardedModel:
         # Filter output
         output_result = self.output_filter.filter(response)
 
-        return output_result.filtered_output
+        return str(output_result.filtered_output or response)

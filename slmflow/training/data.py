@@ -269,6 +269,5 @@ class DataCollator:
         )
 
         # For causal LM, labels = input_ids
-        batch["labels"] = batch["input_ids"].clone()
+        return dict(batch)
 
-        return batch

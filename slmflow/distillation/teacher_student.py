@@ -14,7 +14,7 @@ import torch.nn.functional as F  # noqa: N812
 from transformers import PreTrainedModel
 
 from slmflow.core.config import DistillationConfig, SLMConfig, TrainingConfig
-from slmflow.core.models import load_model, load_tokenizer, save_model
+from slmflow.core.models import TokenizerType, load_model, load_tokenizer, save_model
 from slmflow.training.optimizations import clear_memory, get_memory_stats
 
 logger = logging.getLogger(__name__)
@@ -90,6 +90,10 @@ class DistillationLoss(nn.Module):
 
 
 class DistillationTrainer:
+    _student: PreTrainedModel | None
+    _teacher: PreTrainedModel | None
+    _tokenizer: TokenizerType | None
+
     """
     Knowledge distillation trainer.
 
@@ -164,6 +168,7 @@ class DistillationTrainer:
         """Get student model, loading if necessary."""
         if self._student is None:
             self._load_student()
+        assert self._student is not None, "Student model failed to load"
         return self._student
 
     @property
@@ -171,6 +176,7 @@ class DistillationTrainer:
         """Get teacher model, loading if necessary."""
         if self._teacher is None:
             self._load_teacher()
+        assert self._teacher is not None, "Teacher model failed to load"
         return self._teacher
 
     @property
@@ -183,6 +189,8 @@ class DistillationTrainer:
     def _load_student(self) -> None:
         """Load student model."""
         logger.info("Loading student model...")
+        if self._student_config is None:
+             raise ValueError("Student configuration missing")
         self._student, self._tokenizer = load_model(
             self._student_config,
             for_training=True,
@@ -202,14 +210,16 @@ class DistillationTrainer:
             use_gradient_checkpointing=False,  # Don't need for inference
         )
 
-        self._teacher, _ = load_model(
+        teacher, _ = load_model(
             teacher_config,
             for_training=False,
             use_unsloth=False,  # Just for inference
         )
+        self._teacher = teacher
 
         # Set to eval mode
-        self._teacher.eval()
+        if self._teacher is not None:
+            self._teacher.eval()
 
         logger.info(f"Teacher model loaded: {get_memory_stats()}")
 
@@ -255,7 +265,7 @@ class DistillationTrainer:
             dataset,
             tokenizer,
             text_field=text_field,
-            max_seq_length=self._student_config.max_seq_length,
+            max_seq_length=self._student_config.max_seq_length if self._student_config else 2048,
         )
 
         logger.info(f"Starting distillation on {len(train_dataset)} samples")
@@ -283,7 +293,7 @@ class DistillationTrainer:
                 example[text_field],
                 return_tensors="pt",
                 truncation=True,
-                max_length=self._student_config.max_seq_length,
+                max_length=self._student_config.max_seq_length if self._student_config else 2048,
                 padding="max_length",
             ).to(student.device)
 
