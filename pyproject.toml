@@ -9,7 +9,7 @@ description = "Democratized Small Language Model Training - Train, fine-tune, di
 readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [
-    {name = "SLMFlow Contributors"}
+    {name = "Gaurav Chauhan", email = "2796gaurav@gmail.com"}
 ]
 keywords = [
     "llm",

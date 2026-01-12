@@ -16,7 +16,7 @@ Example:
 """
 
 __version__ = "0.1.0"
-__author__ = "SLMFlow Contributors"
+__author__ = "Gaurav Chauhan"
 
 # Core imports
 from slmflow.core.config import (
